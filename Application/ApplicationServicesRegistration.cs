@@ -1,4 +1,9 @@
-﻿using MediatR;
+﻿using Application.DTOs.auth;
+using Application.DTOs.Auth.Validator;
+using Application.DTOs.Car;
+using Application.DTOs.Car.Validator;
+using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -15,6 +20,8 @@ namespace Application
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly ());
             services.AddMediatR(Assembly.GetExecutingAssembly());
+            services.AddScoped<IValidator<RegisterDto>, RegisterUserValidator>();
+            services.AddScoped<IValidator<CarDto>, CarValidator>();
             return services;
         }
        

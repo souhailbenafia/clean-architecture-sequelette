@@ -12,6 +12,11 @@ namespace persistence.Repositories
     {
 
         private UserRepository _UserRepository;
+        private CarRepository  _CarRepository;
+        private OffreRepository _offreRepository;
+        private SuggestionRepository _suggestionRepository;
+        private RefreshTokenRepository _refreshTokenRepository;
+
 
         private readonly AppDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -23,6 +28,16 @@ namespace persistence.Repositories
         }
 
         public IUserRepository userRepository => _UserRepository ??= new UserRepository(_context);
+
+        public ICarRpository carRpository => _CarRepository ??= new CarRepository(_context);
+
+        public IOffreRepository offreRepository =>_offreRepository ??= new OffreRepository(_context);
+
+        public ISuggestionRepository SuggestionRepository => _suggestionRepository ??= new SuggestionRepository(_context);
+        public IRentRepository rentRepository => throw new NotImplementedException();
+
+        public IRefreshTokenRepository refreshTokenRepositoryrefreshTokenRepository => _refreshTokenRepository ??= new RefreshTokenRepository(_context);
+
         public void Dispose()
         {
             _context.Dispose();

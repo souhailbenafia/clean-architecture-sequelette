@@ -9,5 +9,6 @@ namespace Domain.Entities.identity
 {
     public class Role : IdentityRole<string>
     {
+        public virtual IList<UserRole> UserRoles { get; set; }
     }
 }

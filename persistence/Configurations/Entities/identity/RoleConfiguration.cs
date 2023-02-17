@@ -14,29 +14,32 @@ namespace persistence.Configurations.Entities.identity
     {
         public void Configure(EntityTypeBuilder<Role> builder)
         {
+          /*
             builder.HasData(
-              new IdentityRole
-              {
-                  Id = "Recruiter",
-                  Name = "Recruiter",
-                  NormalizedName = "RECRUITER"
-              },
-               new IdentityRole
-               {
-                   Id = "Recruiter",
-                   Name = "Recruiter",
-                   NormalizedName = "RECRUITER"
-               },
                 new IdentityRole
                 {
-                    Id = "Recruiter",
-                    Name = "Recruiter",
-                    NormalizedName = "RECRUITER"
-                }
-
-
-
-                );
+                    Id = "SELLER",
+                    Name = "Seller",
+                    NormalizedName = "SELLER"
+                },
+                new IdentityRole
+                {
+                    Id = "Admin",
+                    Name = "Admin",
+                    NormalizedName = "ADMIN"
+                },
+                 new IdentityRole
+                 {
+                     Id = "CUSTUMER",
+                     Name = "Custumer",
+                     NormalizedName = "CUSTUMER"
+                 }
+            );
+          */
+            builder.HasMany(e => e.UserRoles)
+                .WithOne(e => e.Role)
+                .HasForeignKey(ur => ur.RoleId)
+                .IsRequired();
         }
     }
 }

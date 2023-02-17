@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.Responses
 {
-    public class BaseResponse
+    public class BaseServicesResponse
     {
         public int Id { get; set; }
         public bool Success { get; set; } = true;

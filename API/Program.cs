@@ -3,29 +3,38 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Application;
-using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 using System.Text;
 using Newtonsoft.Json.Converters;
 using Infrastructure;
 using Application.Identity;
 using persistence;
+using Application.Helpers;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 builder.Services.AddCors(o =>
 {
     o.AddPolicy("CorsPolicy",
-        builder => builder.AllowAnyOrigin()
+        builder => builder.WithOrigins("http://localhost:4200")
         .AllowAnyMethod()
-        .AllowAnyHeader());
+        .AllowAnyHeader()
+        .AllowCredentials());
 });
 
-// Add services to the container.
-builder.Services.ConfigurePersistenceServices(builder.Configuration);
-builder.Services.ComfigureApplicationServices();
+
+builder.Services.Configure<FormOptions>(o =>
+{
+    o.ValueLengthLimit = int.MaxValue;
+    o.MultipartBodyLengthLimit = int.MaxValue;
+    o.MemoryBufferThreshold = int.MaxValue;
+});
 
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -71,21 +80,23 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     };
                 });
 
-builder.Services.AddScoped<IAuthService, AuthService>();
-
-builder.Services.ConfigureApplicationCookie(options =>
-    options.Events.OnRedirectToAccessDenied =
-        options.Events.OnRedirectToLogin = c =>
-        {
-            c.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            return Task.FromResult<object>(null);
-        });
+//builder.Services.ConfigureApplicationCookie(options =>
+  ///  options.Events.OnRedirectToAccessDenied =
+     //   options.Events.OnRedirectToLogin = c =>
+       // {
+         //   c.Response.StatusCode = StatusCodes.Status401Unauthorized;
+           // return Task.FromResult<object>(null);
+        //});
 
 
-// Authorization
-builder.Services.AddAuthorization(options =>
-{
-});
+
+// Add services to the container.
+builder.Services.ComfigureApplicationServices();
+builder.Services.ConfigurePersistenceServices(builder.Configuration);
+builder.Services.ConfigureInfrastructureServices(builder.Configuration);
+
+
+
 
 // GDPR
 builder.Services.Configure<CookiePolicyOptions>(options =>
@@ -97,6 +108,8 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 
 // Antiforgery
 builder.Services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
+
+
 
 
 builder.Services.AddMvc()
@@ -143,6 +156,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseCors("CorsPolicy");
+
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
+    RequestPath = new PathString("/Resources")
+});
 
 // GDPR
 app.UseCookiePolicy();

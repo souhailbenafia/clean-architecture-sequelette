@@ -15,6 +15,7 @@ namespace persistence.Configurations.Entities.identity
         {
             builder.HasKey(x => x.Id);
             builder.Property(e => e.Id).ValueGeneratedOnAdd();
+            builder.HasMany(x => x.RefreshTokens).WithOne();
         }
     }
 }

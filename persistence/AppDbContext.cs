@@ -1,9 +1,13 @@
 ﻿using Application.Persistence;
+using Domain.Entities;
+using Domain.Entities.Enums;
 using Domain.Entities.identity;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using persistence.Configurations.Entities;
+using persistence.Configurations.Entities.identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,24 +21,29 @@ namespace persistence
 
         public const string Schema = "dbo";
 
-        private readonly IMediator _mediator;
-
-       
-
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Context" /> class.
         /// </summary>
         /// <param name="options">Creation options. Useful when using InMemory driver for testing.</param>
-        /// <param name="mediator"><see cref="IMediator"/> instance.</param>
-        public AppDbContext(DbContextOptions<AppDbContext> options, IMediator mediator) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            _mediator = mediator;
+         
         }
 
         #region DbSet 
 
 
+        
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Car> voitures { get; set; }
+
+        public DbSet<Offre> offers { get; set; }
+
+        public DbSet<Suggestion> suggestions { get; set; }
+
+        public DbSet<Rent> Rents { get; set; }
+
+        
 
         #endregion
 
@@ -47,8 +56,17 @@ namespace persistence
             base.OnModelCreating(builder);
 
             // Configuration
-          //  builder.ApplyConfiguration(new CertificationConfiguration());
-           
+
+            builder.ApplyConfiguration(new RoleConfiguration());
+            builder.ApplyConfiguration(new UserConfiguration());
+            builder.ApplyConfiguration(new UserRoleConfiguration());
+
+
+            builder.ApplyConfiguration(new RefreshTokenConfiguration());
+            builder.ApplyConfiguration(new CarConfiguration());
+            builder.ApplyConfiguration(new OffreConfiguration());
+            builder.ApplyConfiguration(new SuggestionConfiguration());
+            builder.ApplyConfiguration(new RentConfiguration());
 
             // Identity
             builder.Entity<User>()
@@ -85,14 +103,21 @@ namespace persistence
             // Commit changes
             return await base.SaveChangesAsync(cancellationToken);
         }
-
-
-
         public Task Save()
         {
             throw new NotImplementedException();
         }
         public IUserRepository userRepository => throw new NotImplementedException();
+
+        public ICarRpository carRpository => throw new NotImplementedException();
+
+        public IOffreRepository offreRepository => throw new NotImplementedException();
+
+        public ISuggestionRepository SuggestionRepository => throw new NotImplementedException();
+
+        public IRentRepository rentRepository => throw new NotImplementedException();
+
+        public IRefreshTokenRepository refreshTokenRepositoryrefreshTokenRepository => throw new NotImplementedException();
 
         #endregion
     }
